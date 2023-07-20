@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_app/components/custom_text.dart';
 import 'package:grocery_app/screens/auth/forgot_password.dart';
+import 'package:grocery_app/screens/main/main_screen.dart';
 import 'package:grocery_app/utils/app_colors.dart';
 import 'package:grocery_app/utils/assets_constants.dart';
 import 'package:grocery_app/utils/util_functions.dart';
@@ -80,7 +81,9 @@ class _LoginState extends State<Login> {
                 ),
                 CustomButton(
                   text: "Login",
-                  onTap: () {},
+                  onTap: () {
+                    UtilFunctions().navigateTo(context, const MainScreen());
+                  },
                 ),
                 const SizedBox(
                   height: 23,

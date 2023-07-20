@@ -10,4 +10,8 @@ class AssetConstants {
 
   static const googleIcon = '${iconPath}google_icon.svg';
   static const facebookIcon = '${iconPath}facebook_icon.svg';
+  static const homeIcon = '${iconPath}home_icon.svg';
+  static const heartIcon = '${iconPath}heart_icon.svg';
+  static const searchIcon = '${iconPath}search_icon.svg';
+  static const userIcon = '${iconPath}user_icon.svg';
 }
