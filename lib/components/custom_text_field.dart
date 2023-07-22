@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import '../utils/app_colors.dart';
 
 class CustomTextfield extends StatelessWidget {
-  const CustomTextfield({
-    Key? key,
-    required this.hintText,
-    this.isObscure = false,
-  }) : super(key: key);
+  const CustomTextfield(
+      {Key? key,
+      required this.hintText,
+      this.isObscure = false,
+      required this.controller})
+      : super(key: key);
 
   final String hintText;
   final bool isObscure;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class CustomTextfield extends StatelessWidget {
         ],
       ),
       child: TextField(
+        controller: controller,
         obscureText: isObscure,
         decoration: InputDecoration(
           hintText: hintText,

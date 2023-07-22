@@ -8,27 +8,36 @@ class CustomButton extends StatelessWidget {
     Key? key,
     required this.text,
     required this.onTap,
+    this.isLoading = false,
   }) : super(key: key);
 
   final String text;
   final Function() onTap;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        width: 259,
-        height: 50,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-            color: AppColors.primaryColor,
-            borderRadius: BorderRadius.circular(8)),
-        child: CustomText(
-          text: text,
-          fontSize: 18,
-          color: AppColors.kWhite,
-          fontWeight: FontWeight.w600,
+    return IgnorePointer(
+      ignoring: isLoading,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          width: 259,
+          height: 50,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(8)),
+          child: isLoading
+              ? const CircularProgressIndicator(
+                  color: AppColors.kWhite,
+                )
+              : CustomText(
+                  text: text,
+                  fontSize: 18,
+                  color: AppColors.kWhite,
+                  fontWeight: FontWeight.w600,
+                ),
         ),
       ),
     );

@@ -14,4 +14,6 @@ class AssetConstants {
   static const heartIcon = '${iconPath}heart_icon.svg';
   static const searchIcon = '${iconPath}search_icon.svg';
   static const userIcon = '${iconPath}user_icon.svg';
+  static const cartIcon = '${iconPath}shopping_cart_icon.svg';
+  static const menuIcon = '${iconPath}side_menu_icon.svg';
 }

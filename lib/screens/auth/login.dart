@@ -1,14 +1,17 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/components/custom_text.dart';
 import 'package:grocery_app/screens/auth/forgot_password.dart';
-import 'package:grocery_app/screens/main/main_screen.dart';
 import 'package:grocery_app/utils/app_colors.dart';
 import 'package:grocery_app/utils/assets_constants.dart';
 import 'package:grocery_app/utils/util_functions.dart';
+import 'package:logger/logger.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/custom_text_field.dart';
 import '../../components/social_button.dart';
+import '../../controllers/auth_controllers.dart';
+import '../../utils/alert_helper.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,6 +21,15 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  /// email controller
+  final emailController = TextEditingController();
+
+  /// password controller
+  final passwordController = TextEditingController();
+
+  /// loader state
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -52,15 +64,17 @@ class _LoginState extends State<Login> {
                 const SizedBox(
                   height: 39,
                 ),
-                const CustomTextfield(
+                CustomTextfield(
                   hintText: "Email",
+                  controller: emailController,
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                const CustomTextfield(
+                CustomTextfield(
                   hintText: "Password",
                   isObscure: true,
+                  controller: passwordController,
                 ),
                 const SizedBox(
                   height: 16,
@@ -81,8 +95,30 @@ class _LoginState extends State<Login> {
                 ),
                 CustomButton(
                   text: "Login",
-                  onTap: () {
-                    UtilFunctions().navigateTo(context, const MainScreen());
+                  isLoading: isLoading,
+                  onTap: () async {
+                    if (validationFields()) {
+                      /// start the loader
+                      setState(() {
+                        isLoading = true;
+                      });
+                      await AuthController().signinUser(
+                        context,
+                        emailController.text,
+                        passwordController.text,
+                      );
+
+                      /// clear text fields
+                      emailController.clear();
+                      passwordController.clear();
+
+                      /// stop the loader
+                      setState(() {
+                        isLoading = false;
+                      });
+                    } else {
+                      Logger().e("valoidation failed");
+                    }
                   },
                 ),
                 const SizedBox(
@@ -118,5 +154,27 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  /// validate text field functions
+  bool validationFields() {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      /// show error dialog
+      AlertHelper.showAlert(
+          context, DialogType.ERROR, "ERROR", "Please fill all the fields!");
+      return false;
+    } else if (!emailController.text.contains("@")) {
+      /// show error dialog
+      AlertHelper.showAlert(
+          context, DialogType.ERROR, "ERROR", "Please enter a valid email!");
+      return false;
+    } else if (passwordController.text.length < 6) {
+      /// show error dialog
+      AlertHelper.showAlert(context, DialogType.ERROR, "ERROR",
+          "Password must contain at least 6 characters!");
+      return false;
+    } else {
+      return true;
+    }
   }
 }
