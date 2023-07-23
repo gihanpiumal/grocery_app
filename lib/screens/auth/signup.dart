@@ -1,9 +1,7 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_app/controllers/auth_controllers.dart';
+import 'package:grocery_app/providers/auth/signup_provider.dart';
 import 'package:grocery_app/screens/auth/login.dart';
-import 'package:grocery_app/utils/alert_helper.dart';
-import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/custom_text.dart';
@@ -20,18 +18,6 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  /// email controller
-  final emailController = TextEditingController();
-
-  /// password controller
-  final passwordController = TextEditingController();
-
-  /// name controller
-  final nameController = TextEditingController();
-
-  /// loader state
-  bool isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -68,14 +54,16 @@ class _SignupState extends State<Signup> {
                 ),
                 CustomTextfield(
                   hintText: "Name",
-                  controller: nameController,
+                  controller:
+                      Provider.of<SignupProvider>(context).nameController,
                 ),
                 const SizedBox(
                   height: 8,
                 ),
                 CustomTextfield(
                   hintText: "Email",
-                  controller: emailController,
+                  controller:
+                      Provider.of<SignupProvider>(context).emailController,
                 ),
                 const SizedBox(
                   height: 8,
@@ -83,7 +71,8 @@ class _SignupState extends State<Signup> {
                 CustomTextfield(
                   hintText: "Password",
                   isObscure: true,
-                  controller: passwordController,
+                  controller:
+                      Provider.of<SignupProvider>(context).passwordController,
                 ),
                 const SizedBox(
                   height: 16,
@@ -103,64 +92,22 @@ class _SignupState extends State<Signup> {
                 const SizedBox(
                   height: 29,
                 ),
-                CustomButton(
-                  text: "SignUp",
-                  isLoading: isLoading,
-                  onTap: () async {
-                    if (validationFields()) {
-                      /// start the loader
-                      setState(() {
-                        isLoading = true;
-                      });
-                      await AuthController().registerUser(
-                        context,
-                        emailController.text,
-                        passwordController.text,
-                      );
-
-                      /// clear text fields
-                      emailController.clear();
-                      nameController.clear();
-                      passwordController.clear();
-
-                      /// stop the loader
-                      setState(() {
-                        isLoading = false;
-                      });
-                    } else {
-                      Logger().e("valoidation failed");
-                    }
+                Consumer<SignupProvider>(
+                  builder: (context, value, child) {
+                    return CustomButton(
+                      text: "SignUp",
+                      isLoading: value.isLoading,
+                      onTap: () {
+                        value.startSignup(context);
+                      },
+                    );
                   },
-                ),
+                )
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  /// validate text field functions
-  bool validationFields() {
-    if (emailController.text.isEmpty ||
-        nameController.text.isEmpty ||
-        passwordController.text.isEmpty) {
-      /// show error dialog
-      AlertHelper.showAlert(
-          context, DialogType.ERROR, "ERROR", "Please fill all the fields!");
-      return false;
-    } else if (!emailController.text.contains("@")) {
-      /// show error dialog
-      AlertHelper.showAlert(
-          context, DialogType.ERROR, "ERROR", "Please enter a valid email!");
-      return false;
-    } else if (passwordController.text.length < 6) {
-      /// show error dialog
-      AlertHelper.showAlert(context, DialogType.ERROR, "ERROR",
-          "Password must contain at least 6 characters!");
-      return false;
-    } else {
-      return true;
-    }
   }
 }

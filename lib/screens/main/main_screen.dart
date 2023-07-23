@@ -8,21 +8,25 @@ import 'package:grocery_app/utils/app_colors.dart';
 import 'package:grocery_app/utils/assets_constants.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({
+    super.key,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  ///list to store botom navigation screen
+  @override
+  void initState() {
+    // TODO: implement initState
+    _screens.addAll(
+        {const Home(), const Favorites(), const Search(), const Profile()});
+    super.initState();
+  }
 
-  final List<Widget> _screens = [
-    const Home(),
-    const Favorites(),
-    const Search(),
-    const Profile()
-  ];
+  ///list to store botom navigation screen
+  final List<Widget> _screens = [];
 
   /// store the active index
   int activeIndex = 0;

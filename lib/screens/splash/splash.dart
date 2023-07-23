@@ -1,9 +1,10 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:grocery_app/components/custom_text.dart';
-import 'package:grocery_app/controllers/auth_controllers.dart';
+import 'package:grocery_app/providers/auth/user_provider.dart';
 import 'package:grocery_app/utils/app_colors.dart';
 import 'package:grocery_app/utils/assets_constants.dart';
+import 'package:provider/provider.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -25,7 +26,7 @@ class _SplashState extends State<Splash> {
     //   },
     // );
 
-    AuthController().initializeUser(context);
+    Provider.of<UserProvider>(context, listen: false).initializeUser(context);
   }
 
   @override

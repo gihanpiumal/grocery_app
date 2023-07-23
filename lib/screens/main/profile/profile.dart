@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_app/components/custom_text.dart';
+import 'package:grocery_app/providers/auth/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({
+    super.key,
+  });
 
   @override
   State<Profile> createState() => _ProfileState();
@@ -11,13 +15,16 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: const Center(
-        child: CustomText(
-          text: "Profile",
-          fontSize: 20,
-        ),
-      ),
-    );
+    return Container(child: Consumer<UserProvider>(
+      builder: (context, value, child) {
+        return Center(
+            child: value.isLoading
+                ? const CircularProgressIndicator()
+                : CustomText(
+                    text: value.userModel.name,
+                    fontSize: 20,
+                  ));
+      },
+    ));
   }
 }

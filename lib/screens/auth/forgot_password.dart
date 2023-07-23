@@ -1,12 +1,10 @@
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+import 'package:grocery_app/providers/auth/forgot_password_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../components/custom_button.dart';
 import '../../components/custom_text.dart';
 import '../../components/custom_text_field.dart';
-import '../../controllers/auth_controllers.dart';
-import '../../utils/alert_helper.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/assets_constants.dart';
 
@@ -18,12 +16,6 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-  /// email controller
-  final emailController = TextEditingController();
-
-  /// loader state
-  bool isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -71,59 +63,28 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 CustomTextfield(
                   hintText: "Email",
-                  controller: emailController,
+                  controller: Provider.of<ForgotPasswordProvider>(context)
+                      .emailController,
                 ),
                 const SizedBox(
                   height: 53,
                 ),
-                CustomButton(
-                  text: "Send reset email",
-                  isLoading: isLoading,
-                  onTap: () async {
-                    if (validationFields()) {
-                      /// start the loader
-                      setState(() {
-                        isLoading = true;
-                      });
-                      await AuthController().sendPasswordResetEmail(
-                        context,
-                        emailController.text,
-                      );
-
-                      /// clear text fields
-                      emailController.clear();
-
-                      /// stop the loader
-                      setState(() {
-                        isLoading = false;
-                      });
-                    } else {
-                      Logger().e("valoidation failed");
-                    }
+                Consumer<ForgotPasswordProvider>(
+                  builder: (context, value, child) {
+                    return CustomButton(
+                      text: "Send reset email",
+                      isLoading: value.isLoading,
+                      onTap: () {
+                        value.startForgotPassword(context);
+                      },
+                    );
                   },
-                ),
+                )
               ],
             ),
           ),
         ),
       ),
     );
-  }
-
-  /// validate text field functions
-  bool validationFields() {
-    if (emailController.text.isEmpty) {
-      /// show error dialog
-      AlertHelper.showAlert(
-          context, DialogType.ERROR, "ERROR", "Please fill email fields!");
-      return false;
-    } else if (!emailController.text.contains("@")) {
-      /// show error dialog
-      AlertHelper.showAlert(
-          context, DialogType.ERROR, "ERROR", "Please enter a valid email!");
-      return false;
-    } else {
-      return true;
-    }
   }
 }
